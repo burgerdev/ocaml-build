@@ -1,11 +1,16 @@
-FROM ocaml/opam:ubuntu-16.04_ocaml-4.04.2_flambda
+FROM docker:17.12 as docker
+
+FROM ocaml/opam:alpine-3.6_ocaml-4.06.0_flambda
 
 USER root
 
-RUN apt-get update && apt-get install -yqq m4 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apk --no-cache add vim m4 ncurses
+
+COPY --from=docker /usr/local/bin/docker /usr/local/bin/docker
 
 USER opam
 
-RUN opam install -y ocamlfind ounit sexplib cmdliner logs fmt
+RUN cd opam-repository && git pull origin master >/dev/null && cd ..
+
+RUN opam update && opam install -y ocamlfind odoc ounit sexplib cmdliner logs fmt jbuilder mparser
 
