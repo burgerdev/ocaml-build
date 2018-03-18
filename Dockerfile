@@ -1,12 +1,10 @@
-FROM docker:17.12 as docker
-
 FROM ocaml/opam:alpine-3.6_ocaml-4.06.0_flambda
 
 USER root
 
 RUN apk --no-cache add vim m4 ncurses
 
-COPY --from=docker /usr/local/bin/docker /usr/local/bin/docker
+COPY --from=docker:17.12 /usr/local/bin/docker /usr/local/bin/docker
 
 USER opam
 
