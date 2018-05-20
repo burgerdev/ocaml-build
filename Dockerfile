@@ -6,9 +6,12 @@ RUN apk --no-cache add vim m4 ncurses
 
 COPY --from=docker:17.12 /usr/local/bin/docker /usr/local/bin/docker
 
+ADD https://github.com/ocaml/opam-repository/archive/master.tar.gz /tmp/repo.tgz
+
+RUN tar -xzf /tmp/repo.tgz -C opam-repository --strip=1 && chown -R opam opam-repository
+
 USER opam
 
-RUN cd opam-repository && git pull origin master >/dev/null && cd ..
-
-RUN opam update && opam install -y ocamlfind odoc ounit sexplib cmdliner logs fmt jbuilder mparser
+RUN opam update && opam upgrade -y && \
+    opam install -y odoc ounit sexplib cmdliner logs fmt mparser
 
